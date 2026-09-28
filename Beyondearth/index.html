@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BEYOND EARTH — The Future of Human Travel</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Orbitron for Futuristic Aesthetics -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Three.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            orbitron: ['Orbitron', 'sans-serif'],
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            space: {
+              900: '#030712',
+              800: '#0b0f19',
+              700: '#111827',
+              accent: '#00f0ff',
+              purple: '#7000ff',
+              cyan: '#00ffe1',
+            }
+          },
+          animation: {
+            'pulse-glow': 'pulseGlow 2s infinite alternate',
+            'float': 'float 4s ease-in-out infinite',
+            'spin-slow': 'spin 20s linear infinite',
+          },
+          keyframes: {
+            pulseGlow: {
+              '0%': { boxShadow: '0 0 15px rgba(0, 240, 255, 0.4)' },
+              '100%': { boxShadow: '0 0 35px rgba(0, 240, 255, 0.8), 0 0 15px rgba(112, 0, 255, 0.6)' }
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-10px)' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #030712;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1f2937;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 240, 255, 0.3);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00f0ff;
+    }
+
+    /* Glassmorphism Classes */
+    .glass-card {
+      background: rgba(11, 15, 25, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    }
+    .glass-card-hover {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .glass-card-hover:hover {
+      border-color: rgba(0, 240, 255, 0.6);
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.3);
+      transform: translateY(-4px);
+    }
+    .glass-nav {
+      background: rgba(3, 7, 18, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+    }
+
+    /* Neon Glow Effects */
+    .neon-text-blue {
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.7), 0 0 20px rgba(0, 240, 255, 0.4);
+    }
+    .neon-text-purple {
+      text-shadow: 0 0 10px rgba(112, 0, 255, 0.7), 0 0 20px rgba(112, 0, 255, 0.4);
+    }
+    .neon-border {
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+    }
+    .neon-btn {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .neon-btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: all 0.5s ease;
+    }
+    .neon-btn:hover::before {
+      left: 100%;
+    }
+  </style>
+</head>
+
+<body class="bg-space-900 text-gray-100 font-sans antialiased overflow-x-hidden selection:bg-space-accent selection:text-space-900">
+
+  <!-- Ambient Space Particles Canvas (Global Background) -->
+  <canvas id="bg-particles-canvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-0 opacity-40"></canvas>
+
+  <!-- Navigation Header -->
+  <header id="main-header" class="fixed top-0 left-0 w-full z-50 glass-nav transition-all duration-300 transform -translate-y-full opacity-0">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="#hero" class="flex items-center space-x-3 group">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-space-accent to-space-purple flex items-center justify-center p-0.5 group-hover:rotate-45 transition-transform duration-500">
+          <div class="w-full h-full bg-space-900 rounded-full flex items-center justify-center">
+            <i data-lucide="orbit" class="w-5 h-5 text-space-accent"></i>
+          </div>
+        </div>
+        <span class="font-orbitron text-xl font-bold tracking-wider text-white">BEYOND<span class="text-space-accent">EARTH</span></span>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
+        <a href="#hero" class="hover:text-space-accent transition-colors flex items-center space-x-1"><i data-lucide="home" class="w-4 h-4"></i><span>HOME</span></a>
+        <a href="#missions-map" class="hover:text-space-accent transition-colors flex items-center space-x-1"><i data-lucide="map" class="w-4 h-4"></i><span>MISSIONS</span></a>
+        <a href="#mission-1" class="hover:text-space-accent transition-colors flex items-center space-x-1"><i data-lucide="rocket" class="w-4 h-4"></i><span>EXPLORE</span></a>
+        <a href="#future-innovations" class="hover:text-space-accent transition-colors flex items-center space-x-1 text-space-cyan"><i data-lucide="sparkles" class="w-4 h-4"></i><span>FUTURE INNOVATIONS</span></a>
+      </nav>
+
+      <!-- Mission Progress Pill -->
+      <div class="flex items-center space-x-4">
+        <div class="glass-card px-4 py-2 rounded-full border border-space-accent/30 flex items-center space-x-3">
+          <div class="text-xs font-orbitron tracking-widest text-gray-400">STATUS:</div>
+          <div class="text-xs font-orbitron font-bold text-space-accent flex items-center space-x-1">
+            <span id="nav-progress-text">0 / 4</span>
+            <i data-lucide="shield-check" class="w-4 h-4 text-space-cyan"></i>
+          </div>
+          <!-- Tiny Bar -->
+          <div class="w-16 h-2 bg-space-800 rounded-full overflow-hidden border border-white/10 hidden sm:block">
+            <div id="nav-progress-bar" class="h-full bg-gradient-to-r from-space-accent to-space-purple w-0 transition-all duration-500"></div>
+          </div>
+        </div>
+
+        <!-- Audio Toggle Button -->
+        <button id="audio-toggle-btn" class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-gray-300 hover:text-space-accent hover:border-space-accent transition-all" title="Toggle Synth Audio FX">
+          <i data-lucide="volume-2" id="audio-icon-on" class="w-5 h-5"></i>
+          <i data-lucide="volume-x" id="audio-icon-off" class="w-5 h-5 hidden"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 1. COVER / LANDING PAGE -->
+  <section id="hero" class="relative w-full h-screen flex items-center justify-center overflow-hidden bg-space-900">
+    <div id="hero-canvas-container" class="absolute inset-0 z-0"></div>
+    <div class="absolute inset-0 bg-radial-vignette pointer-events-none z-10"></div>
+
+    <div class="relative z-20 text-center px-4 max-w-4xl mx-auto flex flex-col items-center">
+      <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full glass-card border border-space-accent/40 text-space-accent text-xs sm:text-sm font-orbitron tracking-widest mb-6 animate-pulse">
+        <i data-lucide="sparkles" class="w-4 h-4"></i>
+        <span>NEXT-GEN INTERACTIVE SPACE EXPERIENCE</span>
+      </div>
+
+      <h1 class="font-orbitron font-black text-5xl sm:text-7xl md:text-8xl tracking-tight text-white mb-2 leading-none">
+        BEYOND <span class="text-transparent bg-clip-text bg-gradient-to-r from-space-accent via-space-cyan to-space-purple neon-text-blue">EARTH</span>
+      </h1>
+
+      <p class="font-orbitron font-semibold text-lg sm:text-2xl text-space-accent tracking-wider mb-4">
+        THE FUTURE OF HUMAN TRAVEL
+      </p>
+
+      <p class="text-gray-300 text-sm sm:text-base max-w-xl font-light tracking-wide mb-10">
+        Explore commercial spaceflight, suborbital journeys, orbital habitats, and next-generation deep space innovations shaping humanity's interplanetary future.
+      </p>
+
+      <button id="begin-mission-btn" onclick="scrollToMissionMap()" class="neon-btn px-8 py-4 rounded-full bg-gradient-to-r from-space-accent to-space-purple text-space-900 font-orbitron font-bold text-base sm:text-lg tracking-wider hover:scale-105 transition-all duration-300 flex items-center space-x-3 shadow-lg shadow-space-accent/30 group">
+        <span>🚀 BEGIN YOUR MISSION</span>
+        <i data-lucide="arrow-right" class="w-5 h-5 text-space-900 group-hover:translate-x-1 transition-transform"></i>
+      </button>
+    </div>
+
+    <div class="absolute bottom-8 z-20 flex flex-col items-center opacity-70 animate-bounce">
+      <span class="text-xs font-orbitron text-gray-400 mb-1 tracking-widest">SCROLL TO DISCOVER</span>
+      <i data-lucide="chevron-down" class="w-5 h-5 text-space-accent"></i>
+    </div>
+  </section>
+
+  <!-- 2. INTERACTIVE MISSION MAP -->
+  <section id="missions-map" class="relative py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto z-20">
+    <div class="text-center mb-16">
+      <h2 class="font-orbitron font-bold text-3xl sm:text-5xl text-white mb-4">
+        SPACE <span class="text-space-accent">MISSION MAP</span>
+      </h2>
+      <p class="text-gray-400 max-w-2xl mx-auto text-sm sm:text-base">
+        Complete each mission game challenge to unlock critical intelligence regarding commercial space travel and future propulsion innovations.
+      </p>
+
+      <div class="mt-8 max-w-xl mx-auto glass-card p-4 rounded-2xl border border-space-accent/30">
+        <div class="flex justify-between items-center text-xs font-orbitron mb-2">
+          <span class="text-gray-300">GLOBAL EXPEDITION PROGRESS</span>
+          <span id="map-progress-count" class="text-space-accent font-bold">MISSION PROGRESS: 0 / 4</span>
+        </div>
+        <div class="w-full h-3 bg-space-800 rounded-full overflow-hidden p-0.5 border border-white/10">
+          <div id="map-progress-fill" class="h-full bg-gradient-to-r from-space-accent via-space-cyan to-space-purple rounded-full w-0 transition-all duration-700 shadow-sm shadow-space-accent"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interactive Grid of Missions -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+      <!-- Mission 1 Card -->
+      <div id="map-card-1" class="glass-card glass-card-hover rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between border-space-accent/40">
+        <div class="absolute top-0 right-0 p-4">
+          <span id="status-badge-1" class="px-3 py-1 rounded-full text-xs font-orbitron bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center space-x-1">
+            <i data-lucide="play" class="w-3 h-3"></i><span>READY</span>
+          </span>
+        </div>
+        <div>
+          <div class="w-12 h-12 rounded-xl bg-space-accent/10 border border-space-accent/30 flex items-center justify-center text-space-accent mb-4">
+            <i data-lucide="globe" class="w-6 h-6"></i>
+          </div>
+          <span class="text-xs font-orbitron text-space-accent tracking-widest block mb-1">MISSION 01</span>
+          <h3 class="font-orbitron font-bold text-xl text-white mb-2">SPACE TOURISM INTRO</h3>
+          <p class="text-gray-400 text-xs sm:text-sm mb-6 line-clamp-2">
+            Overview of suborbital, orbital, and commercial spaceflight investments.
+          </p>
+        </div>
+        <a href="#mission-1" class="neon-btn w-full py-3 rounded-xl bg-space-accent/20 hover:bg-space-accent text-space-accent hover:text-space-900 font-orbitron font-bold text-xs tracking-wider text-center transition-all flex items-center justify-center space-x-2 border border-space-accent/40">
+          <span>ENTER MISSION</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- Mission 2 Card -->
+      <div id="map-card-2" class="glass-card glass-card-hover rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between border-white/10 opacity-80">
+        <div class="absolute top-0 right-0 p-4">
+          <span id="status-badge-2" class="px-3 py-1 rounded-full text-xs font-orbitron bg-gray-800 text-gray-400 border border-gray-700 flex items-center space-x-1">
+            <i data-lucide="lock" class="w-3 h-3"></i><span>LOCKED</span>
+          </span>
+        </div>
+        <div>
+          <div class="w-12 h-12 rounded-xl bg-space-purple/10 border border-space-purple/30 flex items-center justify-center text-space-purple mb-4">
+            <i data-lucide="plane" class="w-6 h-6"></i>
+          </div>
+          <span class="text-xs font-orbitron text-space-purple tracking-widest block mb-1">MISSION 02</span>
+          <h3 class="font-orbitron font-bold text-xl text-white mb-2">VIRGIN GALACTIC</h3>
+          <p class="text-gray-400 text-xs sm:text-sm mb-6 line-clamp-2">
+            Suborbital spaceplanes, passenger microgravity, and high-altitude mechanics.
+          </p>
+        </div>
+        <a href="#mission-2" class="neon-btn w-full py-3 rounded-xl bg-space-800 text-gray-400 font-orbitron font-bold text-xs tracking-wider text-center transition-all flex items-center justify-center space-x-2 border border-white/10">
+          <span>LOCKED</span>
+          <i data-lucide="lock" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- Mission 3 Card -->
+      <div id="map-card-3" class="glass-card glass-card-hover rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between border-white/10 opacity-80">
+        <div class="absolute top-0 right-0 p-4">
+          <span id="status-badge-3" class="px-3 py-1 rounded-full text-xs font-orbitron bg-gray-800 text-gray-400 border border-gray-700 flex items-center space-x-1">
+            <i data-lucide="lock" class="w-3 h-3"></i><span>LOCKED</span>
+          </span>
+        </div>
+        <div>
+          <div class="w-12 h-12 rounded-xl bg-space-cyan/10 border border-space-cyan/30 flex items-center justify-center text-space-cyan mb-4">
+            <i data-lucide="rocket" class="w-6 h-6"></i>
+          </div>
+          <span class="text-xs font-orbitron text-space-cyan tracking-widest block mb-1">MISSION 03</span>
+          <h3 class="font-orbitron font-bold text-xl text-white mb-2">BLUE ORIGIN</h3>
+          <p class="text-gray-400 text-xs sm:text-sm mb-6 line-clamp-2">
+            New Shepard, reusable booster rockets, and vertical launch sequences.
+          </p>
+        </div>
+        <a href="#mission-3" class="neon-btn w-full py-3 rounded-xl bg-space-800 text-gray-400 font-orbitron font-bold text-xs tracking-wider text-center transition-all flex items-center justify-center space-x-2 border border-white/10">
+          <span>LOCKED</span>
+          <i data-lucide="lock" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- Mission 4 Card -->
+      <div id="map-card-4" class="glass-card glass-card-hover rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between border-white/10 opacity-80">
+        <div class="absolute top-0 right-0 p-4">
+          <span id="status-badge-4" class="px-3 py-1 rounded-full text-xs font-orbitron bg-gray-800 text-gray-400 border border-gray-700 flex items-center space-x-1">
+            <i data-lucide="lock" class="w-3 h-3"></i><span>LOCKED</span>
+          </span>
+        </div>
+        <div>
+          <div class="w-12 h-12 rounded-xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-pink-400 mb-4">
+            <i data-lucide="building-2" class="w-6 h-6"></i>
+          </div>
+          <span class="text-xs font-orbitron text-pink-400 tracking-widest block mb-1">MISSION 04</span>
+          <h3 class="font-orbitron font-bold text-xl text-white mb-2">ORION SPAN HOTEL</h3>
+          <p class="text-gray-400 text-xs sm:text-sm mb-6 line-clamp-2">
+            Commercial space stations, Aurora Station concepts, and orbital accommodation.
+          </p>
+        </div>
+        <a href="#mission-4" class="neon-btn w-full py-3 rounded-xl bg-space-800 text-gray-400 font-orbitron font-bold text-xs tracking-wider text-center transition-all flex items-center justify-center space-x-2 border border-white/10">
+          <span>LOCKED</span>
+          <i data-lucide="lock" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 3. MISSION 01 — SPACE TOURISM INTRODUCTION -->
+  <section id="mission-1" class="relative py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto z-20 border-t border-white/10">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
+      <div>
+        <span class="px-3 py-1 rounded-full text-xs font-orbitron bg-space-accent/20 text-space-accent border border-space-accent/30 inline-block mb-2">MISSION 01</span>
+        <h2 class="font-orbitron font-bold text-3xl sm:text-4xl text-white">SPACE TOURISM INTRODUCTION</h2>
+      </div>
+      <div id="m1-completion-status" class="flex items-center space-x-2 text-amber-400 font-orbitron text-sm bg-amber-500/10 px-4 py-2 rounded-xl border border-amber-500/20">
+        <i data-lucide="gamepad-2" class="w-4 h-4"></i>
+        <span>CHALLENGE REQUIRED TO UNLOCK INTEL</span>
+      </div>
+    </div>
+
+    <!-- GAME CONTAINER: Space Tourism Quiz Game -->
+    <div id="m1-game-box" class="glass-card rounded-3xl p-6 sm:p-10 border-space-accent/40 mb-12 relative overflow-hidden">
+      <div class="max-w-3xl mx-auto">
+        <div class="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+          <div class="flex items-center space-x-3">
+            <i data-lucide="brain-circuit" class="w-6 h-6 text-space-accent"></i>
+            <h3 class="font-orbitron font-bold text-lg text-white">CHALLENGE: SPACE TOURISM QUIZ</h3>
+          </div>
+          <span id="m1-quiz-step" class="text-xs font-orbitron text-space-accent">QUESTION 1 / 3</span>
+        </div>
+
+        <div id="m1-quiz-content"></div>
+      </div>
+    </div>
+
+    <!-- UNLOCKED CONTENT: Space Tourism Info -->
+    <div id="m1-unlocked-content" class="hidden transition-all duration-700">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center mb-12">
+        <div class="space-y-6">
+          <div class="glass-card p-6 rounded-2xl border-space-accent/30">
+            <h3 class="font-orbitron font-bold text-2xl text-space-accent mb-3">What is Commercial Space Tourism?</h3>
+            <p class="text-gray-300 text-sm leading-relaxed mb-4">
+              Space tourism refers to human space travel for recreational, leisure, or business purposes. Private commercial companies are now democratizing access to space for civilians.
+            </p>
+            <p class="text-gray-300 text-sm leading-relaxed">
+              With reusable rocket architecture and private orbital habitats, spaceflight is undergoing a transformation similar to the rise of commercial aviation in the 20th century.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="glass-card p-5 rounded-2xl border-white/10">
+              <i data-lucide="arrow-up-right" class="w-6 h-6 text-space-accent mb-2"></i>
+              <h4 class="font-orbitron font-bold text-white text-sm mb-1">Suborbital Tourism</h4>
+              <p class="text-gray-400 text-xs">Crosses the Karman line (100km altitude), providing weightlessness before descending safely.</p>
+            </div>
+            <div class="glass-card p-5 rounded-2xl border-white/10">
+              <i data-lucide="rotate-cw" class="w-6 h-6 text-space-purple mb-2"></i>
+              <h4 class="font-orbitron font-bold text-white text-sm mb-1">Orbital Tourism</h4>
+              <p class="text-gray-400 text-xs">Achieves full orbital velocity around Earth, lasting multiple days aboard private capsules or space stations.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative group rounded-3xl overflow-hidden glass-card border-space-accent/30 shadow-2xl h-96">
+          <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80" alt="Planet Earth from space" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+          <div class="absolute inset-0 bg-gradient-to-t from-space-900 via-space-900/40 to-transparent p-6 flex flex-col justify-end">
+            <span class="text-xs font-orbitron text-space-accent tracking-widest mb-1">EARTH ORBIT VIEW</span>
+            <h4 class="font-orbitron font-bold text-xl text-white">The Overview Effect</h4>
+            <p class="text-gray-300 text-xs mt-1">A cognitive shift in awareness reported by astronauts during spaceflight when viewing Earth from orbit.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. MISSION 02 — VIRGIN GALACTIC -->
+  <section id="mission-2" class="relative py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto z-20 border-t border-white/10">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
+      <div>
+        <span class="px-3 py-1 rounded-full text-xs font-orbitron bg-space-purple/20 text-space-purple border border-space-purple/30 inline-block mb-2">MISSION 02</span>
+        <h2 class="font-orbitron font-bold text-3xl sm:text-4xl text-white">VIRGIN GALACTIC</h2>
+        <p class="text-space-purple font-orbitron text-sm mt-1">"A New Era of Commercial Spaceflight"</p>
+      </div>
+      <div id="m2-completion-status" class="flex items-center space-x-2 text-gray-400 font-orbitron text-sm bg-space-800 px-4 py-2 rounded-xl border border-white/10">
+        <i data-lucide="lock" class="w-4 h-4"></i>
+        <span>COMPLETE PREVIOUS MISSION TO PLAY</span>
+      </div>
+    </div>
+
+    <div id="m2-game-box" class="glass-card rounded-3xl p-6 sm:p-8 border-space-purple/40 mb-12 relative overflow-hidden">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+        <div>
+          <h3 class="font-orbitron font-bold text-lg text-white flex items-center gap-2">
+            <i data-lucide="gamepad" class="text-space-purple"></i>
+            <span>CHALLENGE: REACH THE EDGE OF SPACE</span>
+          </h3>
+          <p class="text-xs text-gray-400">Steer the VSS Unity spaceplane through glowing checkpoints to reach 100km altitude.</p>
+        </div>
+        <div class="flex items-center space-x-4 font-orbitron text-xs">
+          <div class="bg-space-900 px-3 py-1.5 rounded-lg border border-space-purple/30">ALTITUDE: <span id="m2-alt-text" class="text-space-accent font-bold">0 km</span></div>
+          <div class="bg-space-900 px-3 py-1.5 rounded-lg border border-space-purple/30">SCORE: <span id="m2-score-text" class="text-space-cyan font-bold">0</span></div>
+        </div>
+      </div>
+
+      <div class="relative w-full h-80 sm:h-96 rounded-2xl overflow-hidden bg-space-900 border border-space-purple/30">
+        <canvas id="m2-arcade-canvas" class="w-full h-full cursor-crosshair"></canvas>
+        <div id="m2-game-overlay" class="absolute inset-0 bg-space-900/90 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center z-10">
+          <i data-lucide="plane" class="w-12 h-12 text-space-purple mb-4 animate-bounce"></i>
+          <h4 class="font-orbitron font-bold text-2xl text-white mb-2">VSS UNITY FLIGHT SIMULATOR</h4>
+          <p class="text-gray-300 text-xs sm:text-sm max-w-md mb-6">
+            Move mouse or finger sideways. Fly through glowing blue rings (+15km) and avoid space debris.
+          </p>
+          <button id="m2-start-btn" class="neon-btn px-6 py-3 rounded-full bg-space-purple text-white font-orbitron font-bold text-xs tracking-wider hover:bg-space-purple/80 transition-all flex items-center space-x-2">
+            <span>LAUNCH SIMULATION</span>
+            <i data-lucide="play" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="m2-unlocked-content" class="hidden transition-all duration-700">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2 glass-card p-6 sm:p-8 rounded-3xl border-space-purple/30 space-y-4">
+          <div class="inline-flex items-center space-x-2 text-xs font-orbitron text-space-purple">
+            <i data-lucide="check-circle" class="w-4 h-4"></i>
+            <span>SPACEPLANE ARCHITECTURE UNLOCKED</span>
+          </div>
+          <h3 class="font-orbitron font-bold text-2xl text-white">Air-Launch Suborbital System</h3>
+          <p class="text-gray-300 text-sm leading-relaxed">
+            Virgin Galactic utilizes a unique two-stage air-launch system. The mothership (VMS Eve) carries the crewed spaceplane (VSS Unity) to ~45,000 feet.
+          </p>
+          <p class="text-gray-300 text-sm leading-relaxed">
+            Upon release, the spaceplane ignites its hybrid rocket motor, accelerating to Mach 3 and climbing into suborbital space.
+          </p>
+        </div>
+
+        <div class="glass-card p-6 rounded-3xl border-space-purple/30 flex flex-col justify-between">
+          <div class="space-y-4">
+            <h4 class="font-orbitron font-bold text-lg text-white">Passenger Experience</h4>
+            <p class="text-gray-300 text-xs leading-relaxed">
+              Once in space, passengers unbuckle to float freely in zero gravity while gazing out through large circular windows at Earth below.
+            </p>
+          </div>
+          <div class="mt-6 rounded-2xl overflow-hidden h-40 relative">
+            <img src="https://images.unsplash.com/photo-1517976487492-5750f3195933?auto=format&fit=crop&w=800&q=80" alt="Rocket launching" class="w-full h-full object-cover">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. MISSION 03 — BLUE ORIGIN -->
+  <section id="mission-3" class="relative py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto z-20 border-t border-white/10">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
+      <div>
+        <span class="px-3 py-1 rounded-full text-xs font-orbitron bg-space-cyan/20 text-space-cyan border border-space-cyan/30 inline-block mb-2">MISSION 03</span>
+        <h2 class="font-orbitron font-bold text-3xl sm:text-4xl text-white">BLUE ORIGIN</h2>
+        <p class="text-space-cyan font-orbitron text-sm mt-1">"Building a Future Beyond Earth"</p>
+      </div>
+      <div id="m3-completion-status" class="flex items-center space-x-2 text-gray-400 font-orbitron text-sm bg-space-800 px-4 py-2 rounded-xl border border-white/10">
+        <i data-lucide="lock" class="w-4 h-4"></i>
+        <span>COMPLETE PREVIOUS MISSION TO PLAY</span>
+      </div>
+    </div>
+
+    <div id="m3-game-box" class="glass-card rounded-3xl p-6 sm:p-10 border-space-cyan/40 mb-12 relative overflow-hidden">
+      <div class="max-w-2xl mx-auto text-center">
+        <h3 class="font-orbitron font-bold text-xl text-white mb-2 flex items-center justify-center gap-2">
+          <i data-lucide="rocket" class="text-space-cyan"></i>
+          <span>CHALLENGE: NEW SHEPARD LAUNCH CONTROL</span>
+        </h3>
+        <p class="text-xs text-gray-400 mb-8">
+          Throttle thrust to achieve target apogee above 100km.
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8 text-left">
+          <div class="glass-card p-4 rounded-xl border-white/10">
+            <span class="text-xs font-orbitron text-gray-400 block mb-1">BE-3 ENGINE THRUST</span>
+            <div id="m3-thrust-val" class="text-2xl font-orbitron font-bold text-space-cyan">0%</div>
+            <input id="m3-thrust-slider" type="range" min="0" max="100" value="0" class="w-full mt-2 accent-space-cyan" disabled>
+          </div>
+
+          <div class="glass-card p-4 rounded-xl border-white/10">
+            <span class="text-xs font-orbitron text-gray-400 block mb-1">ALTITUDE</span>
+            <div id="m3-alt-val" class="text-2xl font-orbitron font-bold text-white">0.0 km</div>
+            <div class="w-full bg-space-900 h-2 rounded-full overflow-hidden mt-3">
+              <div id="m3-alt-bar" class="bg-space-cyan h-full w-0 transition-all duration-300"></div>
+            </div>
+          </div>
+
+          <div class="glass-card p-4 rounded-xl border-white/10">
+            <span class="text-xs font-orbitron text-gray-400 block mb-1">SYSTEM STATUS</span>
+            <div id="m3-status-val" class="text-sm font-orbitron font-bold text-amber-400 mt-2">PAD READY</div>
+          </div>
+        </div>
+
+        <button id="m3-launch-btn" class="neon-btn px-8 py-4 rounded-full bg-gradient-to-r from-space-cyan to-space-accent text-space-900 font-orbitron font-bold text-sm tracking-wider hover:scale-105 transition-all shadow-lg shadow-space-cyan/20">
+          IGNITE BE-3 ENGINE & LAUNCH
+        </button>
+      </div>
+    </div>
+
+    <div id="m3-unlocked-content" class="hidden transition-all duration-700">
+      <div class="glass-card p-6 rounded-3xl border-space-cyan/30">
+        <h3 class="font-orbitron font-bold text-2xl text-space-cyan mb-3">Fully Reusable Suborbital Architecture</h3>
+        <p class="text-gray-300 text-sm leading-relaxed">
+          Blue Origin's New Shepard system consists of a crew capsule mounted atop a vertical-takeoff rocket booster. Both components are 100% reusable, drastically lowering launch overhead costs.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. MISSION 04 — ORION SPAN / SPACE HOTEL -->
+  <section id="mission-4" class="relative py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto z-20 border-t border-white/10">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
+      <div>
+        <span class="px-3 py-1 rounded-full text-xs font-orbitron bg-pink-500/20 text-pink-400 border border-pink-500/30 inline-block mb-2">MISSION 04</span>
+        <h2 class="font-orbitron font-bold text-3xl sm:text-4xl text-white">ORION SPAN & ORBITAL HOTELS</h2>
+        <p class="text-pink-400 font-orbitron text-sm mt-1">"Luxury Accommodation Beyond Earth"</p>
+      </div>
+      <div id="m4-completion-status" class="flex items-center space-x-2 text-gray-400 font-orbitron text-sm bg-space-800 px-4 py-2 rounded-xl border border-white/10">
+        <i data-lucide="lock" class="w-4 h-4"></i>
+        <span>COMPLETE PREVIOUS MISSION TO PLAY</span>
+      </div>
+    </div>
+
+    <div id="m4-game-box" class="glass-card rounded-3xl p-6 sm:p-10 border-pink-500/40 mb-12 relative overflow-hidden">
+      <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-6">
+          <h3 class="font-orbitron font-bold text-xl text-white mb-2 flex items-center justify-center gap-2">
+            <i data-lucide="building-2" class="text-pink-400"></i>
+            <span>CHALLENGE: BUILD YOUR ORBITAL HOTEL</span>
+          </h3>
+          <p class="text-xs text-gray-400">Select all 6 required functional modules to assemble a viable space station hotel.</p>
+        </div>
+
+        <div id="m4-modules-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
+          <button onclick="toggleHotelModule('m1', this)" class="module-btn glass-card p-4 rounded-2xl border-white/10 hover:border-pink-500/50 flex flex-col items-center space-y-2 transition-all">
+            <i data-lucide="bed" class="w-6 h-6 text-pink-400"></i>
+            <span class="font-orbitron text-xs text-white">🛏 Sleeping Quarters</span>
+          </button>
+          <button onclick="toggleHotelModule('m2', this)" class="module-btn glass-card p-4 rounded-2xl border-white/10 hover:border-pink-500/50 flex flex-col items-center space-y-2 transition-all">
+            <i data-lucide="sprout" class="w-6 h-6 text-green-400"></i>
+            <span class="font-orbitron text-xs text-white">🌱 Hydroponic Greenhouse</span>
+          </button>
+          <button onclick="toggleHotelModule('m3', this)" class="module-btn glass-card p-4 rounded-2xl border-white/10 hover:border-pink-500/50 flex flex-col items-center space-y-2 transition-all">
+            <i data-lucide="flask-conical" class="w-6 h-6 text-purple-400"></i>
+            <span class="font-orbitron text-xs text-white">🔬 Microgravity Lab</span>
+          </button>
+          <button onclick="toggleHotelModule('m4', this)" class="module-btn glass-card p-4 rounded-2xl border-white/10 hover:border-pink-500/50 flex flex-col items-center space-y-2 transition-all">
+            <i data-lucide="eye" class="w-6 h-6 text-space-accent"></i>
+            <span class="font-orbitron text-xs text-white">🪟 Panoramic Deck</span>
+          </button>
+          <button onclick="toggleHotelModule('m5', this)" class="module-btn glass-card p-4 rounded-2xl border-white/10 hover:border-pink-500/50 flex flex-col items-center space-y-2 transition-all">
+            <i data-lucide="utensils" class="w-6 h-6 text-yellow-400"></i>
+            <span class="font-orbitron text-xs text-white">🍽 Zero-G Dining Hub</span>
+          </button>
+          <button onclick="toggleHotelModule('m6', this)" class="module-btn glass-card p-4 rounded-2xl border-white/10 hover:border-pink-500/50 flex flex-col items-center space-y-2 transition-all">
+            <i data-lucide="wind" class="w-6 h-6 text-cyan-400"></i>
+            <span class="font-orbitron text-xs text-white">🚿 ECLSS Life Support</span>
+          </button>
+        </div>
+
+        <div class="flex justify-between items-center pt-4 border-t border-white/10">
+          <span id="m4-selected-count" class="text-xs font-orbitron text-pink-400">MODULES INSTALLED: 0 / 6</span>
+          <button id="m4-verify-btn" onclick="verifySpaceHotel()" class="neon-btn px-6 py-3 rounded-full bg-pink-500 text-white font-orbitron font-bold text-xs tracking-wider disabled:opacity-50" disabled>
+            VERIFY ORBITAL HABITAT
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="m4-unlocked-content" class="hidden transition-all duration-700">
+      <div class="glass-card p-8 rounded-3xl border-pink-500/30 space-y-4">
+        <h3 class="font-orbitron font-bold text-2xl text-white">Aurora Station & Private Orbital Stations</h3>
+        <p class="text-gray-300 text-sm leading-relaxed">
+          Modern commercial space station efforts are actively paving the way for commercial orbital tourism and microgravity laboratories.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. NEW FINAL PAGE: FUTURE INNOVATIONS IN SPACE TRAVEL -->
+  <section id="future-innovations" class="relative py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto z-20 border-t border-space-accent/30">
+    
+    <!-- Hero Header -->
+    <div class="text-center mb-16 space-y-4">
+      <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full glass-card border border-space-accent/50 text-space-cyan font-orbitron text-xs sm:text-sm tracking-widest animate-pulse">
+        <i data-lucide="sparkles" class="w-4 h-4"></i>
+        <span>THE NEXT FRONTIER OF HUMAN TRAVEL</span>
+      </div>
+      <h2 class="font-orbitron font-black text-4xl sm:text-6xl text-white tracking-wide">
+        FUTURE <span class="text-transparent bg-clip-text bg-gradient-to-r from-space-accent via-space-cyan to-space-purple neon-text-blue">INNOVATIONS</span>
+      </h2>
+      <p class="text-gray-300 text-sm sm:text-base max-w-2xl mx-auto font-light">
+        As commercial spaceflight matures, revolutionary scientific breakthroughs are pushing human travel far beyond Earth's orbit toward permanent deep-space settlements.
+      </p>
+    </div>
+
+    <!-- Innovations Showcase Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+
+      <!-- Innovation Card 1: Advanced Propulsion -->
+      <div class="glass-card glass-card-hover p-8 rounded-3xl border-space-accent/40 relative overflow-hidden flex flex-col justify-between">
+        <div>
+          <div class="w-14 h-14 rounded-2xl bg-space-accent/10 border border-space-accent/30 flex items-center justify-center text-space-accent mb-6 shadow-lg shadow-space-accent/20">
+            <i data-lucide="zap" class="w-7 h-7"></i>
+          </div>
+          <span class="text-xs font-orbitron text-space-accent tracking-widest block mb-1">CATEGORY 01</span>
+          <h3 class="font-orbitron font-bold text-2xl text-white mb-4">Advanced Propulsion Systems</h3>
+          
+          <ul class="space-y-4 text-sm text-gray-300">
+            <li class="flex items-start space-x-3">
+              <i data-lucide="check-circle-2" class="w-5 h-5 text-space-accent shrink-0 mt-0.5"></i>
+              <span><strong>Nuclear Thermal & Fusion Propulsion:</strong> Capable of cutting interplanetary travel time to Mars from 6 months down to weeks, drastically reducing deep-space radiation exposure for human crews.</span>
+            </li>
+            <li class="flex items-start space-x-3">
+              <i data-lucide="check-circle-2" class="w-5 h-5 text-space-accent shrink-0 mt-0.5"></i>
+              <span><strong>Light Sails & Laser Arrays:</strong> Propelling small crewed crafts and interstellar probes at a fraction of the speed of light using directed radiation pressure from high-powered lasers.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Innovation Card 2: Bio-Habitats & ECLSS -->
+      <div class="glass-card glass-card-hover p-8 rounded-3xl border-space-purple/40 relative overflow-hidden flex flex-col justify-between">
+        <div>
+          <div class="w-14 h-14 rounded-2xl bg-space-purple/10 border border-space-purple/30 flex items-center justify-center text-space-purple mb-6 shadow-lg shadow-space-purple/20">
+            <i data-lucide="sprout" class="w-7 h-7"></i>
+          </div>
+          <span class="text-xs font-orbitron text-space-purple tracking-widest block mb-1">CATEGORY 02</span>
+          <h3 class="font-orbitron font-bold text-2xl text-white mb-4">Closed-Loop Habitats & Life Support</h3>
+          
+          <ul class="space-y-4 text-sm text-gray-300">
+            <li class="flex items-start space-x-3">
+              <i data-lucide="check-circle-2" class="w-5 h-5 text-space-purple shrink-0 mt-0.5"></i>
+              <span><strong>Bio-Regenerative Life Support (ECLSS):</strong> Genetically optimized microalgae and hydroponic loop arrays providing continuous 100% air and water recycling for self-sufficient deep-space transit.</span>
+            </li>
+            <li class="flex items-start space-x-3">
+              <i data-lucide="check-circle-2" class="w-5 h-5 text-space-purple shrink-0 mt-0.5"></i>
+              <span><strong>3D-Printed Regolith Architecture:</strong> Autonomous robotic swarms constructing radiation-shielded habitats directly on the Moon and Mars using local planetary soil.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Innovation Card 3: In-Situ Resource Utilization -->
+      <div class="glass-card glass-card-hover p-8 rounded-3xl border-space-cyan/40 relative overflow-hidden flex flex-col justify-between">
+        <div>
+          <div class="w-14 h-14 rounded-2xl bg-space-cyan/10 border border-space-cyan/30 flex items-center justify-center text-space-cyan mb-6 shadow-lg shadow-space-cyan/20">
+            <i data-lucide="pickaxe" class="w-7 h-7"></i>
+          </div>
+          <span class="text-xs font-orbitron text-space-cyan tracking-widest block mb-1">CATEGORY 03</span>
+          <h3 class="font-orbitron font-bold text-2xl text-white mb-4">In-Situ Resource Utilization (ISRU)</h3>
+          
+          <ul class="space-y-4 text-sm text-gray-300">
+            <li class="flex items-start space-x-3">
+              <i data-lucide="check-circle-2" class="w-5 h-5 text-space-cyan shrink-0 mt-0.5"></i>
+              <span><strong>Extraterrestrial Water & Fuel Mining:</strong> Extracting water ice from permanently shadowed lunar craters to manufacture rocket propellant (liquid oxygen/hydrogen) in space.</span>
+            </li>
+            <li class="flex items-start space-x-3">
+              <i data-lucide="check-circle-2" class="w-5 h-5 text-space-cyan shrink-0 mt-0.5"></i>
+              <span><strong>Zero-Gravity Manufacturing:</strong> Fabricating ultra-pure fiber optics, biological tissues, and specialized metal alloys in microgravity impossible to produce under Earth gravity.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Innovation Card 4: Artificial Gravity & Medical Tech -->
+      <div class="glass-card glass-card-hover p-8 rounded-3xl border-pink-500/40 relative overflow-hidden flex flex-col justify-between">
+        <div>
+          <div class="w-14 h-14 rounded-2xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-pink-400 mb-6 shadow-lg shadow-pink-500/20">
+            <i data-lucide="heart-pulse" class="w-7 h-7"></i>
+          </div>
+          <span class="text-xs font-orbitron text-pink-400 tracking-widest block mb-1">CATEGORY 04</span>
+          <h3 class="font-orbitron font-bold text-2xl text-white mb-4">Human Adaptation & Space Medicine</h3>
+          
+          <ul class="space-y-4 text-sm text-gray-300">
+            <li class="flex items-start space-x-3">
+              <i data-lucide="check-circle-2" class="w-5 h-5 text-pink-400 shrink-0 mt-0.5"></i>
+              <span><strong>Centrifugal Artificial Gravity:</strong> Rotating tethered spacecraft modules creating artificial Earth-like gravity to eliminate muscle atrophy and bone density loss.</span>
+            </li>
+            <li class="flex items-start space-x-3">
+              <i data-lucide="check-circle-2" class="w-5 h-5 text-pink-400 shrink-0 mt-0.5"></i>
+              <span><strong>Synthetic Torpor & Stasis:</strong> Medically induced hibernation states reducing metabolic consumption, food requirements, and psychological fatigue during multi-year deep-space transit.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Final Callout Banner -->
+    <div class="glass-card p-10 sm:p-16 rounded-3xl border-space-accent/50 text-center space-y-6 bg-gradient-to-b from-space-900 via-space-800 to-space-purple/30">
+      <div class="w-20 h-20 rounded-full bg-space-accent/20 border border-space-accent flex items-center justify-center mx-auto text-space-accent shadow-2xl shadow-space-accent/40">
+        <i data-lucide="rocket" class="w-10 h-10 animate-bounce"></i>
+      </div>
+      <h3 class="font-orbitron font-black text-3xl sm:text-4xl text-white">HUMANITY'S MULTI-PLANETARY ERA HAS BEGUN</h3>
+      <p class="text-gray-300 text-sm sm:text-base max-w-2xl mx-auto font-light">
+        The technologies featured above will turn deep-space travel into a routine reality. Earth is our cradle, but our future lies among the stars.
+      </p>
+      <div class="pt-4 flex justify-center gap-4">
+        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="neon-btn px-8 py-4 rounded-full bg-gradient-to-r from-space-accent to-space-purple text-space-900 font-orbitron font-bold text-sm tracking-wider hover:scale-105 transition-all">
+          BACK TO TOP
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    /* GLOBAL STATE & APPLICATION ENGINE */
+    const appState = {
+      audioEnabled: true,
+      completedMissions: new Set(),
+      m1CurrentQuestion: 0,
+      m1Score: 0,
+      m4SelectedModules: new Set()
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      initThreeHeroScene();
+      initBgParticles();
+      initScrollHeader();
+      initM1Quiz();
+      initM2Game();
+      initM3Game();
+    });
+
+    function playAudioFx(type) {
+      if (!appState.audioEnabled) return;
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        const now = ctx.currentTime;
+        if (type === 'click') {
+          osc.frequency.setValueAtTime(400, now);
+          osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+          osc.start(now); osc.stop(now + 0.05);
+        } else if (type === 'unlock' || type === 'success') {
+          osc.frequency.setValueAtTime(300, now);
+          osc.frequency.exponentialRampToValueAtTime(1200, now + 0.3);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+          osc.start(now); osc.stop(now + 0.3);
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    document.getElementById('audio-toggle-btn').addEventListener('click', () => {
+      appState.audioEnabled = !appState.audioEnabled;
+      document.getElementById('audio-icon-on').classList.toggle('hidden', !appState.audioEnabled);
+      document.getElementById('audio-icon-off').classList.toggle('hidden', appState.audioEnabled);
+    });
+
+    function initScrollHeader() {
+      const header = document.getElementById('main-header');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 100) {
+          header.classList.remove('-translate-y-full', 'opacity-0');
+        } else {
+          header.classList.add('-translate-y-full', 'opacity-0');
+        }
+      });
+    }
+
+    function scrollToMissionMap() {
+      playAudioFx('click');
+      document.getElementById('missions-map').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function completeMission(missionId) {
+      if (!appState.completedMissions.has(missionId)) {
+        appState.completedMissions.add(missionId);
+        playAudioFx('unlock');
+
+        const count = appState.completedMissions.size;
+        document.getElementById('nav-progress-text').innerText = `${count} / 4`;
+        document.getElementById('nav-progress-bar').style.width = `${(count / 4) * 100}%`;
+        document.getElementById('map-progress-count').innerText = `MISSION PROGRESS: ${count} / 4`;
+        document.getElementById('map-progress-fill').style.width = `${(count / 4) * 100}%`;
+
+        const badge = document.getElementById(`status-badge-${missionId}`);
+        if (badge) {
+          badge.className = "px-3 py-1 rounded-full text-xs font-orbitron bg-green-500/20 text-green-400 border border-green-500/30 flex items-center space-x-1";
+          badge.innerHTML = `<i data-lucide="check-circle" class="w-3 h-3"></i><span>COMPLETED</span>`;
+          lucide.createIcons();
+        }
+
+        const nextId = missionId + 1;
+        if (nextId <= 4) {
+          const nextCard = document.getElementById(`map-card-${nextId}`);
+          if (nextCard) {
+            nextCard.classList.remove('opacity-80');
+            const nextBadge = document.getElementById(`status-badge-${nextId}`);
+            nextBadge.className = "px-3 py-1 rounded-full text-xs font-orbitron bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center space-x-1";
+            nextBadge.innerHTML = `<i data-lucide="play" class="w-3 h-3"></i><span>READY</span>`;
+            lucide.createIcons();
+
+            const nextBtn = nextCard.querySelector('a');
+            nextBtn.className = "neon-btn w-full py-3 rounded-xl bg-space-accent/20 hover:bg-space-accent text-space-accent hover:text-space-900 font-orbitron font-bold text-xs tracking-wider text-center transition-all flex items-center justify-center space-x-2 border border-space-accent/40";
+            nextBtn.innerHTML = `<span>ENTER MISSION</span><i data-lucide="arrow-right" class="w-4 h-4"></i>`;
+            lucide.createIcons();
+          }
+
+          const nextSectionStatus = document.getElementById(`m${nextId}-completion-status`);
+          if (nextSectionStatus) {
+            nextSectionStatus.className = "flex items-center space-x-2 text-amber-400 font-orbitron text-sm bg-amber-500/10 px-4 py-2 rounded-xl border border-amber-500/20";
+            nextSectionStatus.innerHTML = `<i data-lucide="gamepad-2" class="w-4 h-4"></i><span>CHALLENGE UNLOCKED - PLAY NOW</span>`;
+            lucide.createIcons();
+          }
+        }
+      }
+    }
+
+    /* THREE.JS HERO SCENE */
+    function initThreeHeroScene() {
+      const container = document.getElementById('hero-canvas-container');
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.z = 6;
+
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      container.appendChild(renderer.domElement);
+
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.3); scene.add(ambientLight);
+      const dirLight = new THREE.DirectionalLight(0x00f0ff, 1.5); dirLight.position.set(5, 3, 5); scene.add(dirLight);
+
+      const earthGeo = new THREE.SphereGeometry(1.8, 64, 64);
+      const earthMat = new THREE.MeshPhongMaterial({ color: 0x0b1d3a, emissive: 0x051026, wireframe: true, transparent: true, opacity: 0.85 });
+      const earthMesh = new THREE.Mesh(earthGeo, earthMat); scene.add(earthMesh);
+
+      function animate() {
+        requestAnimationFrame(animate);
+        earthMesh.rotation.y += 0.002;
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    }
+
+    function initBgParticles() {
+      const canvas = document.getElementById('bg-particles-canvas');
+      const ctx = canvas.getContext('2d');
+      let w = canvas.width = window.innerWidth;
+      let h = canvas.height = window.innerHeight;
+
+      const particles = Array.from({ length: 60 }, () => ({
+        x: Math.random() * w, y: Math.random() * h, size: Math.random() * 2,
+        vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3, alpha: Math.random()
+      }));
+
+      function render() {
+        ctx.clearRect(0, 0, w, h);
+        particles.forEach(p => {
+          p.x += p.vx; p.y += p.vy;
+          if (p.x < 0) p.x = w; if (p.x > w) p.x = 0;
+          if (p.y < 0) p.y = h; if (p.y > h) p.y = 0;
+          ctx.fillStyle = `rgba(0, 240, 255, ${p.alpha})`;
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+        });
+        requestAnimationFrame(render);
+      }
+      render();
+    }
+
+    /* MISSION 1 QUIZ */
+    const m1Questions = [
+      { q: "Which type of space tourism involves travelling beyond the atmosphere without completing a full orbit?", options: ["Orbital Tourism", "Suborbital Tourism", "Lunar Expedition", "Deep-Space Flight"], answer: 1 },
+      { q: "What altitude threshold (Karman Line) defines space?", options: ["50 km", "100 km", "250 km", "500 km"], answer: 1 },
+      { q: "Why invest in reusable rocket technology?", options: ["To slow down space speed", "To reduce cost per launch", "To make single-use rockets", "To reach other galaxies"], answer: 1 }
+    ];
+
+    function initM1Quiz() { renderM1Question(); }
+    function renderM1Question() {
+      const box = document.getElementById('m1-quiz-content');
+      const cur = m1Questions[appState.m1CurrentQuestion];
+      document.getElementById('m1-quiz-step').innerText = `QUESTION ${appState.m1CurrentQuestion + 1} / ${m1Questions.length}`;
+      box.innerHTML = `
+        <h4 class="font-orbitron font-bold text-xl text-white mb-6">${cur.q}</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          ${cur.options.map((opt, idx) => `
+            <button onclick="checkM1Answer(${idx})" class="p-4 rounded-2xl glass-card text-left text-xs sm:text-sm font-orbitron hover:border-space-accent text-gray-200 transition-all flex items-center justify-between">
+              <span>${opt}</span><i data-lucide="chevron-right" class="w-4 h-4 text-space-accent"></i>
+            </button>
+          `).join('')}
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    function checkM1Answer(optIdx) {
+      playAudioFx('click');
+      if (optIdx === m1Questions[appState.m1CurrentQuestion].answer) appState.m1Score++;
+      appState.m1CurrentQuestion++;
+      if (appState.m1CurrentQuestion < m1Questions.length) {
+        renderM1Question();
+      } else {
+        document.getElementById('m1-game-box').innerHTML = `<div class="text-center py-6 text-space-accent font-orbitron text-2xl font-bold">🎉 MISSION COMPLETE!</div>`;
+        document.getElementById('m1-unlocked-content').classList.remove('hidden');
+        document.getElementById('m1-completion-status').className = "flex items-center space-x-2 text-green-400 font-orbitron text-sm bg-green-500/10 px-4 py-2 rounded-xl border border-green-500/20";
+        document.getElementById('m1-completion-status').innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i><span>INTEL UNLOCKED</span>`;
+        lucide.createIcons();
+        completeMission(1);
+      }
+    }
+
+    /* MISSION 2 GAME */
+    function initM2Game() {
+      const canvas = document.getElementById('m2-arcade-canvas');
+      const ctx = canvas.getContext('2d');
+      let running = false, playerX = 150, altitude = 0, score = 0, items = [];
+
+      document.getElementById('m2-start-btn').addEventListener('click', () => {
+        if (!appState.completedMissions.has(1)) return alert("Please complete Mission 01 first!");
+        document.getElementById('m2-game-overlay').classList.add('hidden');
+        running = true; altitude = 0; score = 0; items = [];
+        playAudioFx('click'); gameLoop();
+      });
+
+      canvas.addEventListener('mousemove', (e) => playerX = e.clientX - canvas.getBoundingClientRect().left);
+
+      function gameLoop() {
+        if (!running) return;
+        const w = canvas.width = canvas.parentElement.clientWidth;
+        const h = canvas.height = canvas.parentElement.clientHeight;
+        ctx.clearRect(0, 0, w, h);
+
+        if (Math.random() < 0.05) items.push({ x: Math.random() * (w - 40) + 20, y: -20, type: Math.random() > 0.3 ? 'ring' : 'debris', speed: 3 + Math.random() * 2 });
+
+        for (let i = items.length - 1; i >= 0; i--) {
+          const item = items[i]; item.y += item.speed;
+          ctx.fillStyle = item.type === 'ring' ? '#00f0ff' : '#ef4444';
+          ctx.beginPath(); ctx.arc(item.x, item.y, 12, 0, Math.PI * 2); ctx.fill();
+
+          if (Math.hypot(item.x - playerX, item.y - (h - 40)) < 25) {
+            if (item.type === 'ring') { altitude += 15; score += 100; playAudioFx('click'); }
+            items.splice(i, 1); continue;
+          }
+          if (item.y > h + 20) items.splice(i, 1);
+        }
+
+        ctx.fillStyle = '#7000ff';
+        ctx.beginPath(); ctx.moveTo(playerX, h - 50); ctx.lineTo(playerX - 15, h - 20); ctx.lineTo(playerX + 15, h - 20); ctx.fill();
+
+        document.getElementById('m2-alt-text').innerText = `${altitude} km`;
+        document.getElementById('m2-score-text').innerText = score;
+
+        if (altitude >= 100) {
+          running = false;
+          document.getElementById('m2-game-box').innerHTML = `<div class="text-center py-6 text-space-purple font-orbitron text-2xl font-bold">🎉 MISSION COMPLETE!</div>`;
+          document.getElementById('m2-unlocked-content').classList.remove('hidden');
+          document.getElementById('m2-completion-status').className = "flex items-center space-x-2 text-green-400 font-orbitron text-sm bg-green-500/10 px-4 py-2 rounded-xl border border-green-500/20";
+          document.getElementById('m2-completion-status').innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i><span>INTEL UNLOCKED</span>`;
+          lucide.createIcons();
+          completeMission(2);
+          return;
+        }
+        requestAnimationFrame(gameLoop);
+      }
+    }
+
+    /* MISSION 3 GAME */
+    function initM3Game() {
+      const launchBtn = document.getElementById('m3-launch-btn');
+      const slider = document.getElementById('m3-thrust-slider');
+      let launching = false, alt = 0;
+
+      launchBtn.addEventListener('click', () => {
+        if (!appState.completedMissions.has(2)) return alert("Please complete Mission 02 first!");
+        if (launching) return;
+        launching = true; slider.disabled = false; slider.value = 80;
+        document.getElementById('m3-status-val').innerText = 'ASCENDING...';
+        playAudioFx('click');
+
+        const interval = setInterval(() => {
+          alt += 2.5;
+          document.getElementById('m3-alt-val').innerText = `${alt.toFixed(1)} km`;
+          document.getElementById('m3-alt-bar').style.width = `${Math.min(100, alt)}%`;
+
+          if (alt >= 100) {
+            clearInterval(interval);
+            document.getElementById('m3-game-box').innerHTML = `<div class="text-center py-6 text-space-cyan font-orbitron text-2xl font-bold">🚀 LAUNCH SUCCESSFUL!</div>`;
+            document.getElementById('m3-unlocked-content').classList.remove('hidden');
+            document.getElementById('m3-completion-status').className = "flex items-center space-x-2 text-green-400 font-orbitron text-sm bg-green-500/10 px-4 py-2 rounded-xl border border-green-500/20";
+            document.getElementById('m3-completion-status').innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i><span>INTEL UNLOCKED</span>`;
+            lucide.createIcons();
+            completeMission(3);
+          }
+        }, 150);
+      });
+    }
+
+    /* MISSION 4 GAME */
+    function toggleHotelModule(id, btn) {
+      if (!appState.completedMissions.has(3)) return alert("Please complete Mission 03 first!");
+      playAudioFx('click');
+      if (appState.m4SelectedModules.has(id)) {
+        appState.m4SelectedModules.delete(id); btn.classList.remove('border-pink-500', 'bg-pink-500/20');
+      } else {
+        appState.m4SelectedModules.add(id); btn.classList.add('border-pink-500', 'bg-pink-500/20');
+      }
+      const count = appState.m4SelectedModules.size;
+      document.getElementById('m4-selected-count').innerText = `MODULES INSTALLED: ${count} / 6`;
+      document.getElementById('m4-verify-btn').disabled = count < 6;
+    }
+
+    function verifySpaceHotel() {
+      playAudioFx('success');
+      document.getElementById('m4-game-box').innerHTML = `<div class="text-center py-6 text-pink-400 font-orbitron text-2xl font-bold">🏨 ORBITAL HOTEL COMPLETE!</div>`;
+      document.getElementById('m4-unlocked-content').classList.remove('hidden');
+      document.getElementById('m4-completion-status').className = "flex items-center space-x-2 text-green-400 font-orbitron text-sm bg-green-500/10 px-4 py-2 rounded-xl border border-green-500/20";
+      document.getElementById('m4-completion-status').innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i><span>INTEL UNLOCKED</span>`;
+      lucide.createIcons();
+      completeMission(4);
+      // Rocket orbit variables
+let rocketAngle = 0;
+const orbitRadius = 150; // Distance from Earth (adjust as needed)
+const orbitSpeed = 0.02;  // Speed of rotation
+    }
+  </script>
+</body>
+</html>
